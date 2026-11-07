@@ -31,7 +31,7 @@ Date: 2026-11-07
 2. Customer retention/privacy, audit retention, invoice/tax/numbering/reversal policy, and complaint lifecycle require approval.
 3. Weekly MSR count meanings remain unknown. Values are stored independently and never totaled or relabeled.
 4. Formal MSR approval, locking, reopening, and amendment-version policy is not active until management defines it.
-5. The public enquiry form prepares a local/email draft; it does not deliver or store enquiries server-side.
+5. The public enquiry form now validates, rate-limits, and stores enquiries privately in MongoDB for authorized staff review. Email forwarding to `luckycablenetwork1@gmail.com` remains pending verified mail-provider credentials, and records retain that delivery status.
 6. Vercel trial uploads are limited to 3.5 MB because of serverless request limits. The supplied workbook is well below this limit.
 7. Atlas credentials shared during development must be rotated and replaced with a least-privilege application user before accepting real operational data.
 8. The existing `luckycablenetwork.com` site and DNS are not changed. Future replacement steps are in `SITE_REPLACEMENT.md`.

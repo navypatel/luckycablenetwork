@@ -11,7 +11,7 @@ test("director and technology partner details are text, not reference screenshot
   for (const file of ["directors.png", "partners.png", "contact%20us.png"]) expect((await request.get(`/${file}`)).status()).toBe(404);
 });
 
-test("contact information is actionable and draft delivery remains honest", async ({ page }) => {
+test("contact information is actionable and enquiry storage remains honest", async ({ page }) => {
   await page.goto("/contact");
   await expect(page.getByRole("link", { name: /9512340080/ }).first()).toHaveAttribute("href", "tel:+919512340080");
   await expect(page.getByRole("link", { name: /9512340930/ }).first()).toHaveAttribute("href", "tel:+919512340930");
@@ -20,7 +20,8 @@ test("contact information is actionable and draft delivery remains honest", asyn
   await expect(page.getByRole("link", { name: "luckycablenetwork1@gmail.com" }).first()).toHaveAttribute("href", "mailto:luckycablenetwork1@gmail.com");
   await expect(page.getByText(/SURVEY NO 234\/2, KUND FALIA BHIMPORE/).first()).toBeVisible();
   await expect(page.getByText("26AAGFL0825L1Z9", { exact: true })).toBeVisible();
-  await expect(page.getByText("This form prepares a local draft only.")).toBeVisible();
+  await expect(page.getByText("Send an enquiry to Lucky Cable.")).toBeVisible();
+  await expect(page.getByText(/Email forwarding to luckycablenetwork1@gmail.com is pending/)).toBeVisible();
 });
 
 test("provider carousel keeps layered neighbours while scroll, keyboard and selection change the active card", async ({ page }) => {

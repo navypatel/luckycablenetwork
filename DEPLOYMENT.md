@@ -35,6 +35,8 @@ Add these encrypted variables to the Vercel project for Preview and Production e
 
 Do not add `BOOTSTRAP_ADMIN_EMAIL` or `BOOTSTRAP_ADMIN_PASSWORD` to Vercel. Administrator bootstrap is a one-time trusted local command; clear those variables immediately afterward.
 
+Public enquiries are currently validated, rate-limited, and stored privately in MongoDB. Authorized staff can review them under **Complaints & Support → Website enquiries**. Their delivery status remains `pending-email-configuration`; no email-send claim is made until a verified mail provider is configured. The intended destination is `luckycablenetwork1@gmail.com`.
+
 ## 4. Atlas network access
 
 Vercel functions use dynamic outbound addresses unless a paid fixed-egress feature is configured. For a trial, configure Atlas network access according to the selected Vercel networking plan. If temporary broad access is used, enforce a least-privilege database user, a strong rotated password, TLS, monitoring, and prompt tightening before production.

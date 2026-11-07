@@ -26,18 +26,17 @@ test("service carousel supports buttons and keyboard", async ({ page }) => {
   await expect(page.getByTestId("carousel-status")).toHaveText("Cable Television · 1 of 3");
 });
 
-test("contact validates and downloads a local draft without claiming delivery", async ({ page }) => {
+test("contact validates and confirms a server-accepted enquiry", async ({ page }) => {
+  await page.route("**/api/enquiries", async route => route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ ok: true, reference: "LC-TEST1234" }) }));
   await page.goto("/contact");
-  await page.getByRole("button", { name: "Prepare enquiry" }).click();
+  await page.getByRole("button", { name: "Send enquiry" }).click();
   await expect(page.getByText("Enter your name.", { exact: true })).toBeVisible();
   await page.getByLabel("Your name").fill("Test Visitor");
   await page.getByLabel("Email address").fill("test@example.com");
   await page.getByLabel("What would you like to know?").fill("Please share your current broadband options.");
-  await page.getByRole("button", { name: "Prepare enquiry" }).click();
-  await expect(page.getByRole("status")).toContainText("Your draft is ready. It has not been sent.");
-  const downloadEvent = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Download enquiry draft" }).click();
-  expect((await downloadEvent).suggestedFilename()).toBe("lucky-cable-enquiry.txt");
+  await page.getByRole("button", { name: "Send enquiry" }).click();
+  await expect(page.getByRole("status")).toContainText("Your enquiry has been received by Lucky Cable.");
+  await expect(page.getByRole("status")).toContainText("LC-TEST1234");
 });
 
 test("admin preview navigation, search and no business data", async ({ page }) => {

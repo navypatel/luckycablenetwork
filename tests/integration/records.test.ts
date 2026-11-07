@@ -22,4 +22,22 @@ describe("operational records", () => {
     assert.equal("record" in updated && updated.record && (updated.record as Record<string, unknown>).name, "Updated Customer");
     assert.equal(await AdminAudit.countDocuments({ action: "customers.update" }), 1);
   });
+  it("stores a public enquiry privately and exposes it only through the staff support queue", async () => {
+    const { submitEnquiry } = await import("../../src/lib/enquiries/service");
+    const { listRecords } = await import("../../src/lib/admin/records");
+    const submitted = await submitEnquiry({ name: "Website Visitor", email: "visitor@example.com", interest: "Cable TV", message: "Please contact me about a new cable connection.", planLabel: "", website: "" }, "address-hash");
+    assert.equal(submitted.ok, true);
+    const queue = await listRecords("support", new URL("http://test/?kind=enquiries&q=visitor@example.com"));
+    assert.equal(queue.total, 1);
+    assert.equal(queue.records[0].deliveryStatus, "pending-email-configuration");
+    assert.equal(queue.records[0].destination, "luckycablenetwork1@gmail.com");
+    assert.equal("sourceHash" in queue.records[0], false);
+  });
+  it("atomically accepts no more than three concurrent enquiries per source window", async () => {
+    const { submitEnquiry } = await import("../../src/lib/enquiries/service");
+    const input = { name: "Concurrent Visitor", email: "concurrent@example.com", interest: "Broadband", message: "Please share broadband connection details.", planLabel: "", website: "" };
+    const results = await Promise.all(Array.from({ length: 10 }, () => submitEnquiry(input, "concurrent-address-hash")));
+    assert.equal(results.filter(result => result.ok && result.accepted).length, 3);
+    assert.equal(results.filter(result => !result.ok && result.status === 429).length, 7);
+  });
 });

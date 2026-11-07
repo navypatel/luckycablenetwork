@@ -1,13 +1,13 @@
 import { connectDatabase } from "./database";
 import bcrypt from "bcryptjs";
-import { Customer, ServiceCatalogue, Subscription, Channel, Rack, RackPosition, RackAssignment, Invoice, Payment, Complaint, StaffUser, CompanySetting, AdminAudit } from "./models";
+import { Customer, ServiceCatalogue, Subscription, Channel, Rack, RackPosition, RackAssignment, Invoice, Payment, Complaint, StaffUser, CompanySetting, AdminAudit, PublicEnquiry } from "./models";
 import { audit } from "./audit";
 import { paging } from "./text";
 import { inputs } from "./record-input";
 import type { AdminResource } from "./permissions";
 
 const moduleMap = { "cable-tv": "cable-tv", broadband: "broadband", services: "services" } as const;
-const projection = "-passwordHash -source -tokenHash";
+const projection = "-passwordHash -source -tokenHash -sourceHash";
 export function safeRecord(record: Record<string, any>, hideAuditValues = false) {
   const { _id, __v, passwordHash, tokenHash, source, before, after, ...safe } = record;
   if (!hideAuditValues && before !== undefined) safe.before = before;
@@ -26,6 +26,7 @@ function target(resource: AdminResource, kind: string) {
   if (resource === "racks") return { model: Rack, schema: inputs.racks, extra: {} };
   if (resource === "billing" && kind === "payments") return { model: Payment, schema: inputs.payments, extra: {} };
   if (resource === "billing") return { model: Invoice, schema: inputs.invoices, extra: {} };
+  if (resource === "support" && kind === "enquiries") return { model: PublicEnquiry, schema: null, extra: {} };
   if (resource === "support") return { model: Complaint, schema: inputs.support, extra: {} };
   if (resource === "settings") return { model: CompanySetting, schema: inputs.settings, extra: {} };
   if (resource === "users") return { model: StaffUser, schema: inputs.users, extra: {} };
@@ -40,7 +41,7 @@ export async function listRecords(resource: AdminResource, url: URL) {
   if (resource === "users") model = StaffUser;
   if (resource === "audit") model = AdminAudit;
   if (!model) return { records: [], total: 0, page };
-  if (q) filter.$or = ["code", "name", "rackCode", "channel", "status", "customerNumber", "invoiceNumber", "ticketNumber", "reference", "key", "action", "target"].map(field => ({ [field]: { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" } }));
+  if (q) filter.$or = ["code", "name", "email", "interest", "message", "deliveryStatus", "rackCode", "channel", "status", "customerNumber", "invoiceNumber", "ticketNumber", "reference", "key", "action", "target"].map(field => ({ [field]: { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" } }));
   const sort = resource === "racks" && kind === "positions" ? { rackCode: 1, slot: 1 } : { createdAt: -1, at: -1 };
   const [records, total] = await Promise.all([model.find(filter, projection).sort(sort).skip(skip).limit(limit).lean(), model.countDocuments(filter)]);
   return { records: records.map((record: Record<string, unknown>) => plain(record, resource === "audit")), total, page };
@@ -48,7 +49,7 @@ export async function listRecords(resource: AdminResource, url: URL) {
 
 export async function createRecord(resource: AdminResource, input: unknown, actorId: string, kind = "") {
   await connectDatabase(); const selected = target(resource, kind);
-  if (!selected || (resource === "racks" && kind === "positions")) return { error: "Creation is not supported for this resource.", status: 405 };
+  if (!selected || !selected.schema || (resource === "racks" && kind === "positions")) return { error: "Creation is not supported for this resource.", status: 405 };
   const parsed = selected.schema.safeParse(input);
   if (!parsed.success) return { error: "Check the record fields.", details: parsed.error.issues.map(issue => `${issue.path.join(".")}: ${issue.message}`), status: 400 };
   let data: Record<string, unknown> = { ...parsed.data, ...selected.extra };
@@ -61,7 +62,7 @@ export async function createRecord(resource: AdminResource, input: unknown, acto
 
 export async function updateRecord(resource: AdminResource, recordId: string, input: unknown, actorId: string, kind = "") {
   await connectDatabase(); const selected = target(resource, kind);
-  if (!selected || !/^[a-f\d]{24}$/i.test(recordId) || resource === "users") return { error: "Update is not supported for this record.", status: 405 };
+  if (!selected || !selected.schema || !/^[a-f\d]{24}$/i.test(recordId) || resource === "users") return { error: "Update is not supported for this record.", status: 405 };
   const parsed = selected.schema.safeParse(input);
   if (!parsed.success) return { error: "Check the record fields.", details: parsed.error.issues.map(issue => `${issue.path.join(".")}: ${issue.message}`), status: 400 };
   const before = await selected.model.findById(recordId, projection).lean();

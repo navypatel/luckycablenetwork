@@ -127,6 +127,22 @@ const ComplaintSchema = new Schema({
 
 const CompanySettingSchema = new Schema({ key: { type: String, required: true, unique: true, trim: true }, value: { type: String, required: true }, ...auditFields }, { timestamps: true, strict: "throw" });
 
+const PublicEnquirySchema = new Schema({
+  name: { type: String, required: true, trim: true }, email: { type: String, required: true, trim: true, lowercase: true },
+  interest: { type: String, enum: ["Cable TV", "Broadband", "Package information", "Something else"], required: true },
+  message: { type: String, required: true, trim: true }, planLabel: { type: String, trim: true },
+  destination: { type: String, required: true }, deliveryStatus: { type: String, enum: ["pending-email-configuration", "sent", "failed"], required: true },
+  sourceHash: { type: String, required: true, select: false }
+}, { timestamps: true, strict: "throw" });
+PublicEnquirySchema.index({ createdAt: -1 });
+PublicEnquirySchema.index({ sourceHash: 1, createdAt: -1 });
+
+const EnquiryQuotaSchema = new Schema({
+  key: { type: String, required: true, unique: true }, count: { type: Number, required: true, default: 0 },
+  expiresAt: { type: Date, required: true }
+}, { strict: "throw" });
+EnquiryQuotaSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 export const Customer = mongoose.models.Customer || mongoose.model("Customer", CustomerSchema);
 export const ServiceCatalogue = mongoose.models.ServiceCatalogue || mongoose.model("ServiceCatalogue", CatalogueSchema);
 export const Subscription = mongoose.models.Subscription || mongoose.model("Subscription", SubscriptionSchema);
@@ -138,3 +154,5 @@ export const Invoice = mongoose.models.Invoice || mongoose.model("Invoice", Invo
 export const Payment = mongoose.models.Payment || mongoose.model("Payment", PaymentSchema);
 export const Complaint = mongoose.models.Complaint || mongoose.model("Complaint", ComplaintSchema);
 export const CompanySetting = mongoose.models.CompanySetting || mongoose.model("CompanySetting", CompanySettingSchema);
+export const PublicEnquiry = mongoose.models.PublicEnquiry || mongoose.model("PublicEnquiry", PublicEnquirySchema);
+export const EnquiryQuota = mongoose.models.EnquiryQuota || mongoose.model("EnquiryQuota", EnquiryQuotaSchema);
