@@ -36,4 +36,6 @@ Date: 2026-11-07
 
 ## Deployment status
 
-GitHub and Vercel deployment results must be appended after the external push/deploy commands succeed. A code-ready state is not represented as a live deployment until a reachable Vercel URL has been tested.
+- GitHub: pushed successfully to `navypatel/luckycablenetwork` branch `main`, commit `b121e61`.
+- Vercel: not yet created. This machine has no Vercel project link and no valid Vercel CLI credentials; the GitHub repository also has no Vercel deployment integration/status. Account authorization is the only remaining external step before a `*.vercel.app` URL can be generated and tested.
+- The existing `luckycablenetwork.com` site and DNS remain unchanged.
