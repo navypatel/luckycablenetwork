@@ -22,6 +22,8 @@ Date: 2026-11-07
 - Production dependency audit: 0 vulnerabilities.
 - Original workbook SHA-256 remains `4515e7ae61dcd4f95c9fcb63c31be0e95778da8ac3bd9d4ad1873421f5e811ee`.
 - Independent review: no Critical findings; actionable Important security/Vercel findings were corrected before release.
+- Live Vercel smoke test: public routes and staff sign-in/dashboard passed on desktop and mobile with no browser console errors or warnings.
+- Live Atlas workflows: authorized keepalive returned 200; unauthorized keepalive and excluded source/reference files returned 404; the imported 214-row June 2025 MSR report and 13 rack records loaded successfully.
 
 ## Trial limitations / management decisions still required
 
@@ -33,9 +35,13 @@ Date: 2026-11-07
 6. Vercel trial uploads are limited to 3.5 MB because of serverless request limits. The supplied workbook is well below this limit.
 7. Atlas credentials shared during development must be rotated and replaced with a least-privilege application user before accepting real operational data.
 8. The existing `luckycablenetwork.com` site and DNS are not changed. Future replacement steps are in `SITE_REPLACEMENT.md`.
+9. The trial administrator password previously shared during setup must be changed before the trial URL is shared outside the current team.
+10. The Vercel project dashboard currently reports Node.js 26.x even though `package.json` pins supported deployments to Node.js 22.x. The production build and runtime checks pass, but the dashboard setting should be changed to 22.x when that option is available in Project Settings.
 
 ## Deployment status
 
-- GitHub: pushed successfully to `navypatel/luckycablenetwork` branch `main`, commit `b121e61`.
-- Vercel: not yet created. This machine has no Vercel project link and no valid Vercel CLI credentials; the GitHub repository also has no Vercel deployment integration/status. Account authorization is the only remaining external step before a `*.vercel.app` URL can be generated and tested.
+- GitHub: pushed successfully to `navypatel/luckycablenetwork` branch `main`, commit `55dad8e`.
+- Vercel project: `navy-s-projects/luckycablenetwork`.
+- Trial URL: `https://luckycablenetwork.vercel.app`.
+- Production deployment status: Ready. All five required production environment variables are present and the canonical site URL matches the trial URL.
 - The existing `luckycablenetwork.com` site and DNS remain unchanged.
