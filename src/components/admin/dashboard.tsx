@@ -1,0 +1,16 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Info, Search, ShieldCheck, Database, FileText, Globe, ArrowUpRight } from "lucide-react";
+import { modules } from "@/lib/modules";
+
+export function Dashboard() {
+  const [query, setQuery] = useState("");
+  const filtered = modules.filter(module => `${module.title} ${module.description} ${module.group}`.toLowerCase().includes(query.toLowerCase()));
+  return <><div className="admin-heading"><div><h1>Your workspace, ready to connect.</h1><p>A clear starting point for your network’s day-to-day operations.</p></div><span className="preview-badge">Setup required</span></div>
+    <div className="admin-notice"><Info size={17} aria-hidden="true" /><span>This is a data-free interface preview. Authentication, storage, and operational workflows are not connected. No customer or financial information is displayed.</span></div>
+    <div className="admin-overview"><section className="workspace-panel"><h2>Workspace readiness</h2>{[{ icon: Globe, label: "Public website", status: "Preview available", className: "good" }, { icon: ShieldCheck, label: "Staff authentication", status: "Not configured", className: "pending" }, { icon: Database, label: "Private data storage", status: "Not connected", className: "pending" }, { icon: FileText, label: "Company content", status: "Awaiting verification", className: "" }].map(item => <div className="readiness-row" key={item.label}><span><item.icon aria-hidden="true" />{item.label}</span><span className={`status-tag ${item.className}`}>{item.status}</span></div>)}</section><section className="workspace-panel"><h2>Before going live</h2><ol className="next-steps"><li><strong>Confirm company information</strong>Verify branding, contact details, packages, and service terms.</li><li><strong>Connect secure staff access</strong>Configure sessions and approve server-side permissions.</li><li><strong>Review the MSR workflow</strong>Confirm count semantics and approval rules before importing records.</li></ol></section></div>
+    <section><div className="module-toolbar"><h2>Explore your workspace</h2><div className="module-search"><Search aria-hidden="true" /><input aria-label="Find a module" name="module-search" type="search" placeholder="Find a module…" value={query} onChange={e => setQuery(e.target.value)} /></div></div><div className="module-table-wrap"><table className="module-table"><thead><tr><th scope="col">Module</th><th scope="col" className="module-desc">Purpose</th><th scope="col">Status</th></tr></thead><tbody>{filtered.map(module => <tr key={module.slug}><td><Link href={`/preview/admin/${module.slug}`}><module.icon aria-hidden="true" />{module.title}</Link></td><td className="module-desc">{module.description}</td><td><span className="status-tag">Not connected</span></td></tr>)}{filtered.length === 0 && <tr><td colSpan={3} className="admin-filter-empty">No matching modules. Try a different search.</td></tr>}</tbody></table></div><div className="module-table-footer"><span role="status">{filtered.length} of {modules.length} modules</span><Link href="/admin">Staff access setup <ArrowUpRight size={12} aria-hidden="true" /></Link></div></section>
+  </>;
+}

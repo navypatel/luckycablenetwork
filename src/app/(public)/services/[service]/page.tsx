@@ -1,0 +1,17 @@
+import Link from "next/link";
+import { PartnerChannels } from "@/components/public/partner-channels";
+import { BroadcasterCarousel } from "@/components/public/broadcaster-carousel";
+import { notFound } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
+
+const content = {
+  "cable-tv": { title: "Cable TV", headline: "Good stories deserve\na bigger screen.", description: "Explore cable television with Lucky Cable Daman. Start with the channels, programmes, and viewing setup that matter to your household.", section: "Your next movie night starts here.", items: [["The channels you love", "Ask about the current channel list, bouquet options, à la carte choices, and language preferences."], ["Your viewing setup", "Confirm equipment requirements, installation charges, and support arrangements before choosing a package."], ["Clear package information", "Current prices and package benefits are awaiting management verification. No offer is available to purchase on this preview."]] },
+  "broadband": { title: "Broadband", headline: "Make space for\nyour next big idea.", description: "Work, learn, watch, and connect. Explore the questions that help you choose broadband for your home or workspace.", section: "Find the connection that fits.", items: [["Start with your everyday needs", "Consider the devices, video calls, downloads, and entertainment that share your connection."], ["Check the details", "Confirm available speeds, data limits, fair-use policies, equipment, installation, and service availability with the provider."], ["Choose with confidence", "Advertised 6- and 12-month plans are listed on our packages page. Confirm speed conditions, coverage, and support terms before subscribing."]] }
+};
+export async function generateMetadata({ params }: { params: Promise<{ service: string }> }) { const { service } = await params; return { title: content[service as keyof typeof content]?.title ?? "Service" }; }
+export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
+  const { service } = await params;
+  if (!Object.prototype.hasOwnProperty.call(content, service)) notFound();
+  const page = content[service as keyof typeof content];
+  return <><section className="page-intro"><h1>{page.headline.split("\n").map((line, i) => <span key={line}>{i > 0 && <br />}{line}</span>)}</h1><p>{page.description}</p><Link href="/contact" className="button button-dark">Prepare a service enquiry <ArrowUpRight size={17} aria-hidden="true" /></Link></section><section className="editorial-layout"><div><h2>{page.section}</h2><div className="detail-list">{page.items.map(([title, text]) => <div className="detail-row" key={title}><h3>{title}</h3><p>{text}</p></div>)}</div></div><aside className="info-panel" id="channels"><h2>{service === "cable-tv" ? "Channel information" : "Availability matters."}</h2><p>{service === "cable-tv" ? "No verified channel catalogue has been published yet. Channel names, availability, and package allocations are not inferred from the subscriber workbook." : "We don’t publish an unverified coverage map. Confirm service availability for your address before choosing a plan."}</p><Link href="/packages" className="text-link">View package information <ArrowUpRight size={18} aria-hidden="true" /></Link></aside></section>{service === "cable-tv" && <><BroadcasterCarousel /><PartnerChannels /></>}</>;
+}

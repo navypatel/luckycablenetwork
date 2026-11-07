@@ -1,0 +1,18 @@
+import { LayoutDashboard, FileSpreadsheet, Tv, Wifi, Radio, Server, Users, CreditCard, Headphones, Layers, ChartNoAxesCombined, ShieldCheck, History, Settings } from "lucide-react";
+
+export const modules = [
+  { slug: "msr", title: "MSR Management", icon: FileSpreadsheet, description: "Monthly subscriber reports, staged imports, and approvals.", empty: "No reports connected", needs: "Private storage, import validation, versioning, and approved report permissions.", group: "Reports" },
+  { slug: "cable-tv", title: "Cable TV", icon: Tv, description: "Cable connections and service records.", empty: "No cable connections connected", needs: "Verified customer fields, service catalogue, and connection lifecycle.", group: "Operations" },
+  { slug: "broadband", title: "Broadband", icon: Wifi, description: "Broadband subscriptions and service details.", empty: "No broadband records connected", needs: "Approved plans, service identifiers, and provisioning workflow.", group: "Operations" },
+  { slug: "channels", title: "Channel Management", icon: Radio, description: "Verified channel catalogue and bouquet information.", empty: "No channel catalogue connected", needs: "Approved channel names, identifiers, and allocation rules.", group: "Operations" },
+  { slug: "racks", title: "Rack Management", icon: Server, description: "Infrastructure inventory and assignments.", empty: "No rack inventory connected", needs: "Verified infrastructure inventory and assignment fields.", group: "Operations" },
+  { slug: "customers", title: "Customer Management", icon: Users, description: "Customer records and service relationships.", empty: "No customer directory connected", needs: "Approved personal-data fields, retention policy, and access controls.", group: "Operations" },
+  { slug: "billing", title: "Billing & Payments", icon: CreditCard, description: "Invoices, payment references, and adjustments.", empty: "No finance records connected", needs: "Currency, tax rules, invoice numbering, and auditable reversals.", group: "Finance" },
+  { slug: "support", title: "Complaints & Support", icon: Headphones, description: "Support requests and assigned follow-ups.", empty: "No support queue connected", needs: "Approved complaint statuses, assignment rules, and privacy controls.", group: "Operations" },
+  { slug: "services", title: "Other Services", icon: Layers, description: "Additional management-approved services.", empty: "No additional services published", needs: "Management confirmation of service types and required fields.", group: "Operations" },
+  { slug: "reports", title: "Reports & Analytics", icon: ChartNoAxesCombined, description: "Insights from verified operational records.", empty: "No analytics source connected", needs: "Verified records and explicitly approved metric definitions.", group: "Reports" },
+  { slug: "users", title: "Users & Roles", icon: ShieldCheck, description: "Staff access and granular permissions.", empty: "No identity provider connected", needs: "Secure session authentication and an approved server-side permission matrix.", group: "System" },
+  { slug: "audit", title: "Audit Logs", icon: History, description: "Traceable administrative actions.", empty: "No audit events connected", needs: "An immutable audit trail with actor, action, target, and timestamp.", group: "System" },
+  { slug: "settings", title: "Settings", icon: Settings, description: "Verified company identity and website content.", empty: "Company settings are not connected", needs: "Approved branding, contact details, content, and deployment configuration.", group: "System" }
+];
+export const DashboardIcon = LayoutDashboard;

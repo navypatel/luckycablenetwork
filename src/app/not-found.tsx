@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound() { return <main className="access-page"><h1>This connection leads nowhere.</h1><p>The page you’re looking for does not exist. Head back to the website to find your way.</p><Link href="/" className="button button-dark">Back to home</Link></main>; }

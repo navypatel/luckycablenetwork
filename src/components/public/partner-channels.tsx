@@ -1,0 +1,4 @@
+import Image from "next/image";
+export function PartnerChannels() {
+  return <section className="partner-channels section-pad" aria-labelledby="partner-heading"><div><h2 id="partner-heading">Local partner channels</h2><p>Daman News and Sankalp News Gujarati are Lucky Cable Network’s local partner channels.</p><p>Package inclusion and channel numbers are awaiting confirmation.</p></div><div className="partner-logos"><figure><Image src="/brand/daman-news.png" alt="Daman News" width={2086} height={884} unoptimized /><figcaption>Daman News</figcaption></figure><figure><Image src="/brand/sankalp-news.png" alt="Sankalp News Gujarati" width={1556} height={775} unoptimized /><figcaption>Sankalp News Gujarati</figcaption></figure></div></section>;
+}
